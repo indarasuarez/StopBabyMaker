@@ -1,6 +1,7 @@
 #include "TChain.h"
 #include "looper.h"
 #include "iostream"
+#include "looper.h"
 
 using namespace std;
 
@@ -30,7 +31,7 @@ int main(int argc, char **argv){
      ///hadoop/cms/store/group/snt/phys14/TTJets_MSDecaysCKM_central_Tune4C_13TeV-madgraph-tauola_Phys14DR-PU20bx25_PHYS14_25_V1-v1/V07-02-05//%s", filename));
   }
 
-  if(strcmp( argv[1], "stop1") == 0){
+  if(strcmp( argv[1], "stop") == 0){
       sample->Add(Form("/hadoop/cms/store/group/snt/phys14/SMS-T2tt_2J_mStop-850_mLSP-100_Tune4C_13TeV-madgraph-tauola_Phys14DR-PU20bx25_tsg_PHYS14_25_V1-v1/V07-02-04/%s", filename));
   }
 
@@ -62,7 +63,7 @@ int main(int argc, char **argv){
       sample->Add(Form("/hadoop/cms/store/group/snt/phys14/Tbar_tW-channel-DR_Tune4C_13TeV-CSA14-powheg-tauola_Phys14DR-PU20bx25_PHYS14_25_V1-v1/V07-02-03/%s", filename));
   }
   if(strcmp( argv[1], "wjets") == 0){
-      sample->Add(Form("/hadoop/cms/store/group/snt/phys14/WJetsToLNu_13TeV-madgraph-pythia8-tauola/V07-02-05/%s", filename));
+      sample->Add(Form("/hadoop/cms/store/group/snt/phys14/WJetsToLNu_13TeV-madgraph-pythia8-tauola_Phys14DR-PU20bx25_PHYS14_25_V1-v1/V07-02-05/%s", filename));
   }
   if(strcmp( argv[1], "w_enu") == 0){
       sample->Add(Form("/hadoop/cms/store/group/snt/phys14/WToENu_Tune4C_13TeV-pythia8_Phys14DR-PU20bx25_tsg_PHYS14_25_V1-v1/V07-02-03/%s", filename));

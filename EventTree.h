@@ -3,7 +3,7 @@
  
 #include <string>
 #include <vector>
-#include "CORE/EventSelections.h"
+#include "Math/LorentzVector.h"
  
 // forward declarations
 class TTree;
@@ -13,6 +13,8 @@ typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<float> > LorentzVector;
 typedef std::vector<LorentzVector> vecLorentzVector;
 typedef std::vector<float> vecd;
 typedef std::vector<std::string> vecs;
+typedef std::vector<int> veci; 
+typedef std::vector<bool> vecb;
  
 class EventTree
 {
@@ -35,6 +37,7 @@ public:
     unsigned int run;
     unsigned int ls;
     unsigned int evt;
+    int nvtxs;
 
     unsigned int nEvents;
     unsigned int nEvents_goodvtx;
@@ -43,49 +46,48 @@ public:
     unsigned int nEvents_2goodjets;    
 
     int ngoodlep;
-     
-    int nvtxs;
-    int pu_nvtxs;
-    int gen_nleps;
-    int gen_nels;
-    int gen_nmus;
-    int gen_ntaus;
-    int gen_nleps_fromtau;
-    int gen_nels_fromtau;
-    int gen_nmus_fromtau;
-    int gen_ntaus_fromtau;
-     
+    
+    double MT2W_lep1;
+    double MT2W_lep2;
+    double chi2;
+ 
     float pfmet;
     float pfmet_phi;
-    float genmet;
-    float genmet_phi;
-    float scale1fb;
-    float xsec;
-    float kfactor;
-    float pu_ntrue;
-     
+
+    float dR_lep1_leadb;
+    float dR_lep2_leadb;    
+    float mindphi_met_j1_j2;
+    float MT_MET_lep1;
+    float MT_MET_lep2;
+ 
     bool is_data;
  
     std::string dataset;
     std::string filename;    
     std::string cms3tag;
-     
-    vecd sparm_values;
-    vecs sparm_names;
-    vecd tau_charge;
-    vector<bool> tau_MedisoCI3hit;
-    vecd tau_againstMuonTight;
-    vecd tau_againstElectronLoose;
-    int Ntaus;
-    vecLorentzVector tau_p4;
 
-      vecd isoTrack_pt;   
-      vecd isoTrack_eta;                                         
-      vecd isoTrack_phi;                                         
-      vecd isoTrack_mass;                                        
-      vecd isoTrack_absIso;                                      
-      vecd isoTrack_dz;                                          
-      vector<int> isoTrack_pdgId;
+    //gen info//
+    float scale1fb;
+    float xsec;
+    float kfactor;
+    float pu_ntrue;
+    int pu_nvtxs;
+
+    //sparms
+    vecs sparms_comment;
+    vecs sparms_names;
+    float sparms_filterEfficiency;
+    float sparms_pdfScale;
+    float sparms_pdfWeight1;
+    float sparms_pdfWeight2;
+    float sparms_weight;
+    float sparms_xsec;
+    vecd sparms_values;
+    int sparms_subProcessId;
+    
+    //gen met
+    float genmet;
+    float genmet_phi;
 
 };
  

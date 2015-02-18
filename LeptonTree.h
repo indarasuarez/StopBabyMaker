@@ -2,6 +2,7 @@
 #define LEPTONTREE_H
 
 #include <string>
+#include <vector>
 #include "Math/LorentzVector.h"
 
 // forward declaration
@@ -9,6 +10,8 @@ class TTree;
 
 // typedefs
 typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<float> > LorentzVector;
+typedef std::vector<int> veci;
+enum prodType {fromB, fromC, fromLight, fromZ, fromW, none}; 
 
 class LeptonTree
 {
@@ -24,13 +27,11 @@ public:
 
 protected:
 
-    std::string prefix_; //what is this for?
+    std::string prefix_;
 
 public:    
 
-    //
     // lepton reco info
-    //
     LorentzVector p4;
     LorentzVector pfp4;
     float pt;
@@ -48,7 +49,9 @@ public:
 
     float pfiso04;  //2012 only available for electrons
     float pfiso03;  //2012 only available for electrons
-    float relIso03; //ss
+    float relIso03DB; //ss
+    float relIso03EA;
+    float relIso04DB;
 
     float ip3d;
     float ip3derr;
@@ -66,15 +69,19 @@ public:
     //
     // electron specific info
     //
+    bool is_eleid_loose;
     bool is_eleid_medium;
     bool is_eleid_tight;
     float eoverpin; 
-
+//    veci els_pfcands_idx;
+ 
     //
     // muon specific info
     //
+    bool is_muoid_loose;
     bool is_muoid_tight;
- 
+  //  int mus_pfcands_idx;
+    veci production_type;
 };
 
 #endif

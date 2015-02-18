@@ -26,7 +26,7 @@ public:
     void Reset ();
     void SetBranches (TTree* tree);
     void SetAliases (TTree* tree);
-    void FillCommon ();
+    void FillCommon(unsigned int overlep1_idx, unsigned int overlep2_idx);
     void SetJetPtSelection (std::string cone_size, float pt_cut);
     void GetJetPtSelections (std::string cone_size = "");
      
@@ -36,14 +36,53 @@ public:
     int ak4GoodPFJets;
     int ak8GoodPFJets;
     int nGoodGenJets;
+    int ak4_nBTags_Med;
+    float ak4_HT;
+
+    float ak4_htssm;
+    float ak4_htosm;
+    float ak4_htratiom;
 
     vecLorentzVector ak4pfjets_p4;
+    LorentzVector ak4pfjets_leadMEDbjet_p4;
     vecd ak4pfjets_qg_disc;    
     vecd ak4pfjets_btag_disc;
     vecd ak4pfjets_pu_id;
     veci ak4pfjets_parton_flavor;
     vecb ak4pfjets_loose_id;
-     
+    vecb ak4pfjets_passMEDbtag;
+    float ak4pfjets_leadMEDbjet_pt;
+    vecd ak4pfjets_MEDbjet_pt;
+    LorentzVector ak4pfjets_leadbtag_p4;
+
+    vecd ak4pfjets_chf;       
+    vecd ak4pfjets_nhf;
+    vecd ak4pfjets_cef;
+    vecd ak4pfjets_nef;
+    veci ak4pfjets_cm;
+    veci ak4pfjets_nm;
+
+   //overlaps
+    LorentzVector ak4pfjet_overlep1_p4;
+    float ak4pfjet_overlep1_btag_disc;
+    float ak4pfjet_overlep1_pu_id;
+    float ak4pfjet_overlep1_chf;       
+    float ak4pfjet_overlep1_nhf;
+    float ak4pfjet_overlep1_cef;
+    float ak4pfjet_overlep1_nef;
+    int ak4pfjet_overlep1_cm;
+    int ak4pfjet_overlep1_nm;
+
+    LorentzVector ak4pfjet_overlep2_p4;
+    float ak4pfjet_overlep2_btag_disc;
+    float ak4pfjet_overlep2_pu_id;
+    float ak4pfjet_overlep2_chf;
+    float ak4pfjet_overlep2_nhf;
+    float ak4pfjet_overlep2_cef;
+    float ak4pfjet_overlep2_nef;
+    int ak4pfjet_overlep2_cm;
+    int ak4pfjet_overlep2_nm;
+ 
     // ak8 PF jets
     vecLorentzVector ak8pfjets_p4;
     vecd ak8pfjets_tau1;

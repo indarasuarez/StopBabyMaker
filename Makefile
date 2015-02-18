@@ -21,29 +21,38 @@ NGLIBS         = $(ROOTGLIBS)
 NGLIBS        += -lMinuit
 GLIBS          = $(filter-out -lNew, $(NGLIBS))
 
-FWLIB	       = /home/users/isuarez/stop/StopBaby/Tools/MiniFWLite/libMiniFWLite.so 
+FWLIB	       = /home/users/isuarez/Software/MiniFWLite/libMiniFWLite.so 
+CORELIB        = /home/users/isuarez/CORE/CMS3_CORE.so
 
-runBabyMaker: runBabyMaker.o looper.o EventTree.o LeptonTree.o JetTree.o CORE/CMS3.o CORE/EventSelections.o CORE/JetSelections.o CORE/ElectronSelections.o CORE/MuonSelections.o
-	$(CXX) $(CXXFLAGS) -c $<
-	$(LD) $(LDFLAGS)  -o runBabyMaker runBabyMaker.o looper.o EventTree.o JetTree.o LeptonTree.o CORE/CMS3.o CORE/EventSelections.o CORE/JetSelections.o CORE/ElectronSelections.o CORE/MuonSelections.o $(FWLIB) $(GLIBS) 
+runBabyMaker: runBabyMaker.o looper.o EventTree.o LeptonTree.o JetTree.o IsoTracksTree.o TauTree.o GenParticleTree.o StopSelections.o
+	$(LD) $(LDFLAGS)  -o runBabyMaker runBabyMaker.o looper.o EventTree.o JetTree.o LeptonTree.o IsoTracksTree.o TauTree.o GenParticleTree.o StopSelections.o $(GLIBS) -lGenVector $(CORELIB) $(FWLIB)
 
 runBabyMaker.o: runBabyMaker.C looper.h 
-	$(CXX) $(CXXFLAGS) -c runBabyMaker.C
+	$(CXX) $(CXXFLAGS) -c runBabyMaker.C 
 
-looper.o: looper.C looper.h CORE/CMS3.h EventTree.h LeptonTree.h
+looper.o: looper.C looper.h EventTree.h TauTree.h IsoTracksTree.h GenParticleTree.h LeptonTree.h StopSelections.h
 	$(CXX) $(CXXFLAGS) -c looper.C
 
-EventTree.o: EventTree.cc EventTree.h CORE/CMS3.h CORE/EventSelections.h
-	$(CXX) $(CXXFLAGS) -c EventTree.cc
+EventTree.o: EventTree.cc EventTree.h StopSelections.h 
+	$(CXX) $(CXXFLAGS) -c EventTree.cc 
 
-LeptonTree.o: LeptonTree.cc LeptonTree.h CORE/CMS3.h CORE/EventSelections.h CORE/ElectronSelections.h CORE/MuonSelections.h
-	$(CXX) $(CXXFLAGS) -c LeptonTree.cc
-JetTree.o: JetTree.cc JetTree.h CORE/CMS3.h CORE/EventSelections.h CORE/JetSelections.h
+LeptonTree.o: LeptonTree.cc LeptonTree.h StopSelections.h
+	$(CXX) $(CXXFLAGS) -c LeptonTree.cc 
+
+JetTree.o: JetTree.cc JetTree.h StopSelections.h
 	$(CXX) $(CXXFLAGS) -c JetTree.cc
 
-#CMS3.o: CMS3.cc CMS3.h
-#	$(CXX) $(CXXFLAGS) -c CMS3.cc
+TauTree.o: TauTree.cc TauTree.h
+	$(CXX) $(CXXFLAGS) -c TauTree.cc
 
+IsoTracksTree.o: IsoTracksTree.cc IsoTracksTree.h
+	$(CXX) $(CXXFLAGS) -c IsoTracksTree.cc
+
+GenParticleTree.o: GenParticleTree.cc GenParticleTree.h
+	$(CXX) $(CXXFLAGS) -c GenParticleTree.cc
+
+StopSelections.o: StopSelections.cc StopSelections.h
+	$(CXX) $(CXXFLAGS) -c StopSelections.cc
 .PHONY: clean
 clean:  
 	rm -v -f \

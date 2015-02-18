@@ -1,7 +1,9 @@
 #include "EventTree.h"
+#include "GenParticleTree.h"
 #include "LeptonTree.h"
 #include "JetTree.h"
-#include "CORE/CMS3.h"
+#include "TauTree.h"
+#include "IsoTracksTree.h"
 #include "TFile.h"
 #include "TTree.h"
 #include "TRandom.h"
@@ -43,7 +45,16 @@ class babyMaker {
     LeptonTree lep1;
     LeptonTree lep2;
     JetTree jets;
-
+    GenParticleTree gen_els;
+    GenParticleTree gen_mus;
+    GenParticleTree gen_taus;
+    GenParticleTree gen_nus;
+    GenParticleTree gen_bs;
+    GenParticleTree gen_qs;
+    GenParticleTree gen_lsp;
+    GenParticleTree gen_stop;
+    TauTree Taus;
+    IsoTracksTree Tracks;
 // = new EventTree(); //dont make a pointer
 };
 

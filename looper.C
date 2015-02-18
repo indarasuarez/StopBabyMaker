@@ -4,9 +4,6 @@
 #include <typeinfo>
 
 #include "looper.h"
-#include "CORE/CMS3.h" 
-#include "CORE/MuonSelections.h"
-#include "CORE/ElectronSelections.h"
 
 #include "TBenchmark.h"
 #include "TChain.h"
@@ -14,23 +11,58 @@
 #include "TFile.h"
 #include "TROOT.h"
 #include "TTreeCache.h"
-/*
-#include "TBufferFile.h"
-#include "TStreamer.h"
-#include "TStreamerInfo.h"
-#include "TBenchmark.h"
-*/
+
+#include "/home/users/isuarez/CORE/CMS3.h"
+#include "/home/users/isuarez/CORE/MCSelections.h"
+#include "StopSelections.h"
+#include "stop_variables/mt2w.cc"
+#include "stop_variables/mt2w_bisect.cpp"
+#include "stop_variables/chi2.cc"
+
 typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<float> > LorentzVector;
 
 using namespace std;
-//using namespace tas;
+using namespace tas;
 //Switches
-char* path = ".";
+char* path = "./babies_16Feb2015/";
+
+struct Lepton{
+        int id;
+        int idx;
+        LorentzVector p4;
+      //  Lepton(id, idx, p4) {id = id; idx = idx; p4 = p4;}
+};
+
+struct sortbypt{
+  bool operator () (const pair<int, LorentzVector> &v1, const pair<int,LorentzVector> &v2)
+  {
+        return v1.second.pt() > v2.second.pt();
+  }
+};
+
+struct sortLepbypt{
+  bool operator () (const Lepton &lep1, const Lepton &lep2)
+  {
+        return lep1.p4.pt() > lep2.p4.pt();
+  }
+};
 
 babyMaker::babyMaker()
 {
+   StopEvt = EventTree();
    lep1 = LeptonTree("lep1_");
    lep2 = LeptonTree("lep2_");
+   jets = JetTree();
+   gen_els = GenParticleTree("els_");
+   gen_mus = GenParticleTree("mus_");
+   gen_taus = GenParticleTree("taus_");
+   gen_nus = GenParticleTree("nus_");
+   gen_bs  = GenParticleTree("bs_");
+   gen_qs  = GenParticleTree("qs_");
+   gen_lsp = GenParticleTree("lsp_");
+   gen_stop = GenParticleTree("stop_");
+   Taus = TauTree();
+   Tracks = IsoTracksTree();
 }
 
 //Main functions
@@ -44,6 +76,16 @@ void babyMaker::MakeBabyNtuple(const char* output_name){
   lep1.SetBranches(BabyTree);
   lep2.SetBranches(BabyTree);
   jets.SetBranches(BabyTree);
+  gen_els.SetBranches(BabyTree);
+  gen_mus.SetBranches(BabyTree);
+  gen_taus.SetBranches(BabyTree);
+  gen_nus.SetBranches(BabyTree);
+  gen_bs.SetBranches(BabyTree);
+  gen_qs.SetBranches(BabyTree);
+  gen_lsp.SetBranches(BabyTree);
+  gen_stop.SetBranches(BabyTree);
+  Taus.SetBranches(BabyTree);
+  Tracks.SetBranches(BabyTree);
 }
 
 void babyMaker::InitBabyNtuple(){
@@ -52,6 +94,16 @@ void babyMaker::InitBabyNtuple(){
     lep1.Reset();
     lep2.Reset();
     jets.Reset();
+    gen_els.Reset();
+    gen_mus.Reset();
+    gen_taus.Reset();
+    gen_nus.Reset();
+    gen_bs.Reset();
+    gen_qs.Reset();
+    gen_lsp.Reset();
+    gen_stop.Reset();
+    Taus.Reset();
+    Tracks.Reset();
 } 
 
 //Main function
@@ -68,6 +120,11 @@ int babyMaker::looper(TChain* chain, char* output_name, int nEvents, string sign
     unsigned int nEvents_GoodLep = 0;
     unsigned int nEvents_2GoodJets = 0;
     unsigned int nEventsToDo = chain->GetEntries();
+    unsigned int jet_overlep1_idx = -9999;
+    unsigned int jet_overlep2_idx = -9999;
+    unsigned int track_overlep1_idx = -9999;
+    unsigned int track_overlep2_idx = -9999;
+
 
   if( nEvents >= 0 ) nEventsToDo = nEvents;
   TObjArray *listOfFiles = chain->GetListOfFiles();
@@ -104,75 +161,152 @@ int babyMaker::looper(TChain* chain, char* output_name, int nEvents, string sign
 
       InitBabyNtuple();
 
-   //   std::cout << "[babymaker::looper]: filling event vars" << std::endl;
+     // std::cout << "[babymaker::looper]: filling event vars" << std::endl;
       //Fill Event Variables
       StopEvt.FillCommon(file->GetName()); 
+   
+   //   dumpDocLines();
+
       if(StopEvt.nvtxs<1) continue;
       nEvents_GoodVtx++;
-      if(cms3.evt_pfmet()<30.) continue;
+      if(evt_pfmet()<30.) continue;
       nEvents_MET30++;
 
-      //Lepton Variables
+     //Lepton Variables
+      //We only look at the two highest pt ones
       int nGoodLeptons = 0;
-      for (unsigned int eidx = 0; eidx < cms3.els_p4().size(); eidx++){
-       // if (!isGoodVetoElectron(eidx)) continue;
-        if(!PassElectronPreSelections(eidx)) continue;
-        nGoodLeptons++;
-        if(nGoodLeptons==1) lep1.FillCommon(11,eidx);
-        if(nGoodLeptons==2) lep2.FillCommon(11,eidx);
-      }
-      for (unsigned int muidx = 0; muidx < cms3.mus_p4().size(); muidx++){
-        //if (!isGoodVetoMuon(muidx)) continue;
-       if(!PassMuonPreSelections(muidx)) continue;
-       nGoodLeptons++;
-       if(nGoodLeptons==1) lep1.FillCommon(13,muidx);
-       if(nGoodLeptons==2) lep2.FillCommon(13,muidx);
-      }
-      if(nGoodLeptons<1) continue;
-      nEvents_GoodLep++;
-      StopEvt.ngoodlep = nGoodLeptons;
+      int idx1 = -9999;
+      int idx2 = -9999;
+      int pdgid1 = -9999;
+      int pdgid2 = -9999;
 
-      // std::cout << "[babymaker::looper]: filling jets vars" << std::endl;         
-     //jets and b-tag variables
-       jets.FillCommon();
+      vector<Lepton> GoodLeps;
+      for (unsigned int eidx = 0; eidx < els_p4().size(); eidx++){
+        if(!PassElectronPreSelections(eidx)) continue;
+        Lepton goodlepton;
+        goodlepton.id  = -11*els_charge().at(eidx);
+        goodlepton.idx = eidx;
+        goodlepton.p4  = els_p4().at(eidx);  
+        GoodLeps.push_back(goodlepton);
+      }
+
+      for (unsigned int midx = 0; midx < mus_p4().size(); midx++){
+        if(!PassMuonPreSelections(midx)) continue;
+        Lepton goodlepton;
+        goodlepton.id  = -13*mus_charge().at(midx);
+        goodlepton.idx = midx;
+        goodlepton.p4  = mus_p4().at(midx);
+        GoodLeps.push_back(goodlepton);
+      }
+   
+      sort(GoodLeps.begin(),GoodLeps.end(),sortLepbypt());       
+
+      nGoodLeptons = GoodLeps.size();
+      if(nGoodLeptons<1) continue;
+      nEvents_GoodLep++; 
+
+      StopEvt.ngoodlep = nGoodLeptons; 
+
+      lep1.FillCommon(GoodLeps.at(0).id, GoodLeps.at(0).idx);      
+      if( nGoodLeptons > 1 ) lep2.FillCommon(GoodLeps.at(1).id, GoodLeps.at(1).idx);
+
+     //get the jets overlapping with the selected leptons
+      jet_overlep1_idx = getOverlappingJetIndex(lep1.p4, pfjets_p4() , 0.4);
+      if(nGoodLeptons>1) jet_overlep2_idx = getOverlappingJetIndex(lep2.p4, pfjets_p4() , 0.4); 
+      
+      //std::cout << "[babymaker::looper]: filling jets vars" << std::endl;         
+     //jets and b-tag variables feeding the index for the jet overlapping the selected leptons
+      jets.FillCommon(jet_overlep1_idx, jet_overlep2_idx);
       if(jets.ak4GoodPFJets < 2) continue;
       nEvents_2GoodJets++;
+     
+     // now calculate jets + lep variables
+     //DR(lep, leadB) with medium discriminator
+     StopEvt.dR_lep1_leadb = dRbetweenVectors(jets.ak4pfjets_leadMEDbjet_p4, lep1.p4);
+     if(nGoodLeptons>1) StopEvt.dR_lep2_leadb = dRbetweenVectors(jets.ak4pfjets_leadMEDbjet_p4, lep2.p4);
+     
+     //MT2W
+     StopEvt.MT2W_lep1 = calculateMT2w(jets.ak4pfjets_p4, jets.ak4pfjets_passMEDbtag, lep1.p4,StopEvt.pfmet, StopEvt.pfmet_phi);
+     if(nGoodLeptons>1) StopEvt.MT2W_lep2 = calculateMT2w(jets.ak4pfjets_p4, jets.ak4pfjets_passMEDbtag, lep2.p4,StopEvt.pfmet, StopEvt.pfmet_phi);
 
-     //taus and pf charged cands
-      int ntau = 0;
-      for(unsigned int iTau = 0; iTau < cms3.taus_pf_p4().size(); iTau++){
-        if(cms3.taus_pf_p4().at(iTau).pt() < 20.0) continue;
-        if(fabs(cms3.taus_pf_p4().at(iTau).eta()) > 2.3) continue;
-  //                  if(!cms3.taus_pf_byDecayModeFinding().at(iTau)) continue;
-              if (!cms3.taus_pf_byLooseCombinedIsolationDeltaBetaCorr3Hits().at(iTau)) continue; // HPS3 hits taus
-           //   if (!cms3.taus_pf_againstElectronLoose().at(iTau)) continue; // loose electron rejection                                                                                                                                  
-           //                // if (!cms3.taus_pf_againstMuonTight().at(iTau)) continue; // loose muon rejection                                                                      
-        StopEvt.tau_p4.push_back(cms3.taus_pf_p4().at(iTau));
-        StopEvt.tau_charge.push_back(cms3.taus_pf_charge().at(iTau));
-        StopEvt.tau_MedisoCI3hit.push_back(cms3.taus_pf_byMediumCombinedIsolationDeltaBetaCorr3Hits().at(iTau));
-         StopEvt.tau_againstElectronLoose.push_back(cms3.taus_pf_againstElectronLoose().at(iTau));
-         StopEvt.tau_againstMuonTight.push_back(cms3.taus_pf_againstMuonTight().at(iTau));
+    //chi2
+    vector<float> dummy_sigma;
+    for (size_t idx = 0; idx < jets.ak4pfjets_p4.size(); ++idx){
+      dummy_sigma.push_back(0.1);
+    } 
+    StopEvt.chi2 = calculateChi2(jets.ak4pfjets_p4, dummy_sigma, jets.ak4pfjets_passMEDbtag);
 
-         ntau++;
+    //Jets & MET
+    StopEvt.mindphi_met_j1_j2 =  getMinDphi(StopEvt.pfmet_phi,jets.ak4pfjets_p4.at(0),jets.ak4pfjets_p4.at(1));
+
+    //MET & Leptons
+    StopEvt.MT_MET_lep1 = calculateMt(lep1.p4, StopEvt.pfmet, StopEvt.pfmet_phi);
+    if(nGoodLeptons>1) StopEvt.MT_MET_lep2 = calculateMt(lep2.p4, StopEvt.pfmet, StopEvt.pfmet_phi);
+
+    //taus
+    Taus.FillCommon();
+ 
+   for (unsigned int ipf = 0; ipf < pfcands_p4().size(); ipf++) {
+    //  if(ipf == StopEvt.track_overlep1_idx || ipf == StopEvt.track_overlep2_idx) continue;
+      if(pfcands_charge().at(ipf) == 0) continue;
+      if(pfcands_p4().at(ipf).pt() < 5) continue;
+      if(fabs(pfcands_dz().at(ipf)) > 0.1) continue;
+
+      //remove everything that is within 0.1 of selected lead and subleading leptons
+      if(ROOT::Math::VectorUtil::DeltaR(pfcands_p4().at(ipf), lep1.p4)<0.1) continue;
+      if(nGoodLeptons>1){
+          if(ROOT::Math::VectorUtil::DeltaR(pfcands_p4().at(ipf), lep2.p4)<0.1) continue;
       }
-     StopEvt.Ntaus=ntau;
-     for (unsigned int ipf = 0; ipf < cms3.pfcands_p4().size(); ipf++) {
+      Tracks.FillCommon(ipf);
+    } 
+    Tracks.isoTracks_nselected = Tracks.isoTracks_selectedidx.size();
 
-        if(cms3.pfcands_charge().at(ipf) == 0) continue;
-        if(cms3.pfcands_p4().at(ipf).pt() < 5) continue;
-        if(fabs(cms3.pfcands_dz().at(ipf)) > 0.1) continue;
+   //ttbar counters:
+   int ntausfromt=0;
+   int nelsfromt=0;
+   int nmusfromt=0;
+   // std::cout << "[babymaker::looper]: filling gen particles vars" << std::endl;
+    //gen particles
+    for(unsigned int genx = 0; genx < genps_p4().size() ; genx++){
+      //void GenParticleTree::FillCommon (int idx, int pdgid_=0, int pdgmotherid_=0, int status_=0)
+      gen_els.FillCommon(genx, pdg_el, pdg_W, 1);
+      if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_el && genps_status().at(genx) == 1 && abs(genps_id_mother().at(genps_idx_mother().at(genx))) == pdg_t) nelsfromt++;
 
-        StopEvt.isoTrack_pt.push_back    ( cms3.pfcands_p4().at(ipf).pt()   );
-        StopEvt.isoTrack_eta.push_back   ( cms3.pfcands_p4().at(ipf).eta()  );
-        StopEvt.isoTrack_phi.push_back   ( cms3.pfcands_p4().at(ipf).phi()  );
-        StopEvt.isoTrack_mass.push_back  ( cms3.pfcands_mass().at(ipf)      );
-        StopEvt.isoTrack_absIso.push_back( TrackIso(ipf)                    );
-        StopEvt.isoTrack_dz.push_back    ( cms3.pfcands_dz().at(ipf)        );
-        StopEvt.isoTrack_pdgId.push_back ( cms3.pfcands_particleId().at(ipf));
-     } 
+      gen_mus.FillCommon(genx, pdg_mu, pdg_W, 1);
+      if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_mu && genps_status().at(genx) == 1 && abs(genps_id_mother().at(genps_idx_mother().at(genx))) == pdg_t ) nelsfromt++;
 
+      gen_taus.FillCommon(genx, pdg_tau, pdg_W, 2);
+      if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_tau && genps_status().at(genx) == 2 && abs(genps_id_mother().at(genps_idx_mother().at(genx))) == pdg_t ) ntausfromt++;
+      gen_taus.FillCommon(genx, pdg_tau, pdg_tau, 1);
+    
+      gen_nus.FillCommon(genx, pdg_nue, pdg_W, 1);
+      gen_nus.FillCommon(genx, pdg_numu, pdg_W, 1);
+      gen_nus.FillCommon(genx, pdg_nutau, pdg_W, 1);
 
-      BabyTree->Fill();
+      gen_qs.FillCommon(genx, pdg_d, pdg_W, 23);
+      gen_qs.FillCommon(genx, pdg_u, pdg_W, 23);
+      gen_qs.FillCommon(genx, pdg_s, pdg_W, 23);
+      gen_qs.FillCommon(genx, pdg_c, pdg_W, 23);
+       
+      gen_bs.FillCommon(genx, pdg_b, pdg_t, 23);
+    
+      gen_lsp.FillCommon(genx, pdg_chi_1neutral, 0, 1);
+      gen_lsp.FillCommon(genx, pdg_chi_2neutral, 0, 1);
+      gen_lsp.FillCommon(genx, pdg_chi_3neutral, 0, 1);
+      gen_lsp.FillCommon(genx, pdg_chi_4neutral, 0, 1);
+      gen_lsp.FillCommon(genx, pdg_chi_1plus1, 0, 1);
+      gen_lsp.FillCommon(genx, pdg_chi_2plus1, 0, 1);
+     
+      gen_stop.FillCommon(genx, pdg_stop1, 0, 62);
+      gen_stop.FillCommon(genx, pdg_stop2, 0, 62);
+
+    }
+
+    gen_els.gen_n = nelsfromt;
+    gen_mus.gen_n = nmusfromt;
+    gen_taus.gen_n = ntausfromt;
+
+    BabyTree->Fill();
 
     }//close event loop
     
@@ -187,11 +321,11 @@ int babyMaker::looper(TChain* chain, char* output_name, int nEvents, string sign
 
   bmark->Stop("benchmark");
   cout << endl;
-  cout << "Events Processed		" << nEventsDone << endl;
-  cout << "Events with 1 Good Vertex	" << nEvents_GoodVtx << endl;
-  cout << "Events with MET > 30 GeV	" << nEvents_MET30 << endl;
-  cout << "Events with 1 Good Lepton	" << nEvents_GoodLep << endl;
-  cout << "Events with 2 Good Jets	" << nEvents_2GoodJets << endl;
+  cout << "Events Processed                     " << nEventsDone << endl;
+  cout << "Events with 1 Good Vertex            " << nEvents_GoodVtx << endl;
+  cout << "Events with MET > 30 GeV             " << nEvents_MET30 << endl;
+  cout << "Events with at least 1 Good Lepton   " << nEvents_GoodLep << endl;
+  cout << "Events with at least 2 Good Jets     " << nEvents_2GoodJets << endl;
   cout << "-----------------------------" << endl;
   cout << "CPU  Time:   " << Form( "%.01f", bmark->GetCpuTime("benchmark")  ) << endl;                                                                                          
   cout << "Real Time:   " << Form( "%.01f", bmark->GetRealTime("benchmark") ) << endl;
