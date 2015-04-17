@@ -1,12 +1,12 @@
 #include "StopSelections.h"
 #include "Math/LorentzVector.h"
 #include "Math/VectorUtil.h"
-#include "/home/users/isuarez/CORE/CMS3.h"
-#include "/home/users/isuarez/CORE/ElectronSelections.h"
-#include "/home/users/isuarez/CORE/MuonSelections.h"
-#include "/home/users/isuarez/CORE/JetSelections.h"
-#include "/home/users/isuarez/CORE/VertexSelections.h"
-#include "/home/users/isuarez/CORE/IsoTrackVeto.h"
+#include "CMS3.h"
+#include "ElectronSelections.h"
+#include "MuonSelections.h"
+#include "JetSelections.h"
+#include "VertexSelections.h"
+#include "IsoTrackVeto.h"
 
 using namespace tas;
 

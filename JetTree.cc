@@ -1,6 +1,6 @@
 #include "JetTree.h"
-#include "/home/users/isuarez/CORE/CMS3.h"
-#include "/home/users/isuarez/CORE/JetSelections.h"
+#include "CMS3.h"
+#include "JetSelections.h"
 #include "StopSelections.h"
 
 using namespace tas;

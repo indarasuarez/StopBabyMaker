@@ -1,6 +1,6 @@
 #include "TauTree.h"
 #include "Math/GenVector/PtEtaPhiE4D.h"
-#include "/home/users/isuarez/CORE/CMS3.h"
+#include "CMS3.h"
 
 TauTree::TauTree ()
 {

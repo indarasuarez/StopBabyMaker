@@ -12,8 +12,8 @@
 #include "TROOT.h"
 #include "TTreeCache.h"
 
-#include "/home/users/isuarez/CORE/CMS3.h"
-#include "/home/users/isuarez/CORE/MCSelections.h"
+#include "CMS3.h"
+#include "MCSelections.h"
 #include "StopSelections.h"
 #include "stop_variables/mt2w.cc"
 #include "stop_variables/mt2w_bisect.cpp"

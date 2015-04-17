@@ -1,7 +1,7 @@
 #include "EventTree.h"
 #include "TString.h"
-#include "/home/users/isuarez/CORE/CMS3.h"
-#include "/home/users/isuarez/CORE/VertexSelections.h"
+#include "CMS3.h"
+#include "VertexSelections.h"
 #include "StopSelections.h"
 
 using namespace tas; 

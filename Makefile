@@ -21,8 +21,13 @@ NGLIBS         = $(ROOTGLIBS)
 NGLIBS        += -lMinuit
 GLIBS          = $(filter-out -lNew, $(NGLIBS))
 
-FWLIB	       = /home/users/isuarez/Software/MiniFWLite/libMiniFWLite.so 
-CORELIB        = /home/users/isuarez/CORE/CMS3_CORE.so
+COREPATH       = $(HOME)/CORE
+FWLIBPATH      = $(HOME)/Software/MiniFWLite
+
+CXXFLAGS       += -I$(COREPATH)
+
+FWLIB	       = $(FWLIBPATH)/libMiniFWLite.so 
+CORELIB        = $(COREPATH)/CMS3_CORE.so
 
 runBabyMaker: runBabyMaker.o looper.o EventTree.o LeptonTree.o JetTree.o IsoTracksTree.o TauTree.o GenParticleTree.o StopSelections.o
 	$(LD) $(LDFLAGS)  -o runBabyMaker runBabyMaker.o looper.o EventTree.o JetTree.o LeptonTree.o IsoTracksTree.o TauTree.o GenParticleTree.o StopSelections.o $(GLIBS) -lGenVector -lTMVA -lEG $(CORELIB) $(FWLIB)

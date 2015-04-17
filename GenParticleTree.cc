@@ -1,8 +1,8 @@
 #include "GenParticleTree.h"
 #include "Math/GenVector/PtEtaPhiE4D.h"
-#include "/home/users/isuarez/CORE/CMS3.h"
+#include "CMS3.h"
 #include "StopSelections.h"
-#include "/home/users/isuarez/CORE/MCSelections.h"
+#include "MCSelections.h"
 
 GenParticleTree::GenParticleTree ()
 {

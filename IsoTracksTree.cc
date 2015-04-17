@@ -1,7 +1,7 @@
 #include "IsoTracksTree.h"
 #include "Math/GenVector/PtEtaPhiE4D.h"
-#include "/home/users/isuarez/CORE/CMS3.h"
-#include "/home/users/isuarez/CORE/IsoTrackVeto.h"
+#include "CMS3.h"
+#include "IsoTrackVeto.h"
 #include "StopSelections.h"
 
 IsoTracksTree::IsoTracksTree ()

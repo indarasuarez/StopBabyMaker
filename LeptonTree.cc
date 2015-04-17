@@ -2,11 +2,11 @@
 #include <algorithm>
 #include <cmath>
 #include "Math/GenVector/PtEtaPhiE4D.h"
-#include "/home/users/isuarez/CORE/CMS3.h"
-#include "/home/users/isuarez/CORE/ElectronSelections.h"
-#include "/home/users/isuarez/CORE/MuonSelections.h"
-#include "/home/users/isuarez/CORE/MCSelections.h"
-#include "/home/users/isuarez/CORE/VertexSelections.h"
+#include "CMS3.h"
+#include "ElectronSelections.h"
+#include "MuonSelections.h"
+#include "MCSelections.h"
+#include "VertexSelections.h"
 #include "StopSelections.h"
 
 LeptonTree::LeptonTree ()
