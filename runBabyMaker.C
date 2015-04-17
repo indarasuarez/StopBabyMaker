@@ -76,11 +76,11 @@ int main(int argc, char **argv){
   if(strcmp( argv[1], "wjets") == 0){
       sample->Add(Form("/hadoop/cms/store/group/snt/phys14/WJetsToLNu_13TeV-madgraph-pythia8-tauola_Phys14DR-PU20bx25_PHYS14_25_V1-v1/V07-02-08/%s", filename));
   }
-  if(strcmp( argv[1], "w_enu") == 0){
-      sample->Add(Form("/hadoop/cms/store/group/snt/phys14/WToENu_Tune4C_13TeV-pythia8_Phys14DR-PU20bx25_tsg_PHYS14_25_V1-v1/V07-02-08/%s", filename));
+  if(strcmp( argv[1], "wzjets") == 0){
+      sample->Add(Form("/hadoop/cms/store/group/snt/phys14/WZJetsTo3LNu_Tune4C_13TeV-madgraph-tauola_Phys14DR-PU20bx25_PHYS14_25_V1-v1/V07-02-08/%s", filename));
   }
-  if(strcmp( argv[1], "w_munu") == 0){
-      sample->Add(Form("/hadoop/cms/store/group/snt/phys14/WToMuNu_Tune4C_13TeV-pythia8_Phys14DR-PU20bx25_tsg_PHYS14_25_V1-v1/CMS3_v07-02-08/%s", filename));
+  if(strcmp( argv[1], "zz") == 0){
+      sample->Add(Form("/hadoop/cms/store/group/snt/phys14/ZZTo4L_Tune4C_13TeV-powheg-pythia8_Phys14DR-PU20bx25_PHYS14_25_V1-v1/V07-02-08/%s", filename));
   }
 
   mylooper->looper(sample, Form("%s%s", argv[1],suffix), nevents,dirpath);
