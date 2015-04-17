@@ -6,6 +6,7 @@
 #include "/home/users/isuarez/CORE/ElectronSelections.h"
 #include "/home/users/isuarez/CORE/MuonSelections.h"
 #include "/home/users/isuarez/CORE/MCSelections.h"
+#include "/home/users/isuarez/CORE/VertexSelections.h"
 #include "StopSelections.h"
 
 LeptonTree::LeptonTree ()
@@ -56,8 +57,8 @@ void LeptonTree::FillCommon (int id, int idx)
         is_el  		= true;
 
 	//d0 and dz
-    	int gsfidx  = els_gsftrkidx().at(idx);
-	if (gsfidx >= 0 && vtxidx >= 0) {
+    	//int gsfidx  = els_gsftrkidx().at(idx);
+	if (vtxidx >= 0) {
             d0 = els_d0().at(idx);
             dz = els_dzPV().at(idx);
             d0err = els_d0Err().at(idx);

@@ -37,16 +37,14 @@ typedef std::vector<LorentzVector> vecLorentzVector;
    const int pdg_W = 24;
 
 //vertices & pileup
-bool isGoodVertex(size_t ivtx);
 int numberOfGoodVertices();
-int firstGoodVertex();
 
 //gen functions
 int leptonGenpCount(int& nele, int& nmuon, int& ntau);
 int leptonGenpCount_lepTauDecays(int& nele, int& nmuon, int& ntau);
-bool PassMuonPreSelections(unsigned int muIdx);
-bool PassElectronPreSelections(unsigned int elIdx);
-bool PassJetPreSelections(unsigned int jetIdx);
+bool PassMuonPreSelections(unsigned int muIdx, float pt);
+bool PassElectronPreSelections(unsigned int elIdx, float pt);
+bool PassJetPreSelections(unsigned int jetIdx, float pt, float eta);
 vector<pair <int, LorentzVector>> sort_pt( vector<LorentzVector> p4_, float pt_);
 vector< LorentzVector> getsortedp4(vector<pair <int, LorentzVector>> index_);
 float getMinDphi(float metPhi, LorentzVector& vec1, LorentzVector& vec2 );
@@ -55,12 +53,14 @@ float dRbetweenVectors(LorentzVector& vec1, LorentzVector& vec2 );
 float  calculateMt(const LorentzVector p4, double met, double met_phi);
 int getOverlappingJetIndex(LorentzVector& lep_, vector<LorentzVector> jets_, double dR);
 int getOverlappingTrackIndex(LorentzVector& lep_, int pdgid_, vector<LorentzVector> tracks_, double dR);
+bool isVetoTrack(int ipf, LorentzVector lepp4_, int charge);
+bool isVetoTau(int ipf, LorentzVector lepp4_, int charge);
 //int leptonIsFromW(int idx, int id, bool alsoSusy);
 //bool idIsCharm(int id);
 //bool idIsBeauty(int id);
 //TString triggerName(TString);
 //bool passHLTTriggerPattern(const char*);
-float TrackIso(int);
+//float TrackIso(int);
 //bool isFromW(Lep lep);
 //bool isFromZ(Lep lep);
 

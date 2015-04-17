@@ -49,7 +49,10 @@ public:
     vecd ak4pfjets_btag_disc;
     vecd ak4pfjets_pu_id;
     veci ak4pfjets_parton_flavor;
-    vecb ak4pfjets_loose_id;
+    vecb ak4pfjets_loose_puid;
+    vecb ak4pfjets_loose_pfid;
+    vecb ak4pfjets_medium_pfid;
+    vecb ak4pfjets_tight_pfid;
     vecb ak4pfjets_passMEDbtag;
     float ak4pfjets_leadMEDbjet_pt;
     vecd ak4pfjets_MEDbjet_pt;

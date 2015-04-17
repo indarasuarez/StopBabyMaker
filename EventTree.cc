@@ -1,6 +1,7 @@
 #include "EventTree.h"
 #include "TString.h"
 #include "/home/users/isuarez/CORE/CMS3.h"
+#include "/home/users/isuarez/CORE/VertexSelections.h"
 #include "StopSelections.h"
 
 using namespace tas; 
@@ -21,7 +22,7 @@ void EventTree::FillCommon (const std::string &root_file_name)
     string signalstr ("mStop");
 
     if (filestr.find(signalstr) != string::npos) signal = true;
-
+//std::cout << "run "<<evt_run()<<" lumiblock "<<evt_lumiBlock() <<" event "<<evt_event()<<" nvtxs "<<numberOfGoodVertices()<<" pfmet "<<evt_pfmet()<<" pfmetphi "<< evt_pfmetPhi()<< std::endl;
     run = evt_run();
     ls = evt_lumiBlock();
     evt = evt_event();
@@ -59,7 +60,7 @@ void EventTree::FillCommon (const std::string &root_file_name)
     }
     dataset = evt_dataset().at(0).Data();
     filename = root_file_name;
-    cms3tag = evt_CMS2tag().at(0).Data();
+    cms3tag = evt_CMS3tag().at(0).Data();
     
 }
  
@@ -107,6 +108,8 @@ void EventTree::Reset ()
 
     genmet 	= -9999.;
     genmet_phi 	= -9999.;
+    PassTrackVeto = false;
+    PassTauVeto = false;
  
 }
  
@@ -153,4 +156,6 @@ void EventTree::SetBranches (TTree* tree)
     tree->Branch("sparms_subProcessId", &sparms_subProcessId);
     tree->Branch("genmet", &genmet);
     tree->Branch("genmet_phi", &genmet_phi);
+    tree->Branch("PassTrackVeto",&PassTrackVeto);
+    tree->Branch("PassTauVeto",&PassTauVeto);
 }

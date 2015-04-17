@@ -84,11 +84,14 @@ public:
     float sparms_xsec;
     vecd sparms_values;
     int sparms_subProcessId;
-    
+        
     //gen met
     float genmet;
     float genmet_phi;
 
+   //veto
+   bool PassTrackVeto;
+   bool PassTauVeto;
 };
  
 #endif

@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "Math/LorentzVector.h"
+#include "TString.h"
 
 class TTree;
 
@@ -12,6 +13,7 @@ typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<float> > LorentzVector;
 typedef std::vector<LorentzVector> vecLorentzVector;
 typedef std::vector<float> vecd;
 typedef std::vector<std::string> vecs;
+typedef std::vector<TString>  vects;
 typedef std::vector<int> veci;
 typedef std::vector<bool> vecb;
 
@@ -24,16 +26,21 @@ public:
     void Reset ();
     void SetBranches (TTree* tree);
     void SetAliases (TTree* tree) const;
-    void FillCommon ();
+    void FillCommon (int idx, float tau_pt_cut, float tau_eta_cut);
 
+    vects tau_IDnames;
+    vecLorentzVector tau_leadtrack_p4;
+    vecLorentzVector tau_leadneutral_p4;
+    vecLorentzVector tau_p4;
+    std::vector<vecLorentzVector> tau_isocand_p4;
+    std::vector<vecLorentzVector> tau_sigcand_p4;
+    vecd tau_mass;
+    std::vector<vecd> tau_ID;
     vecd tau_charge;
-    vecb tau_MedisoCI3hit;
-    vecb tau_byDecayModeFinding;
+    int ngoodtaus;
     vecd tau_againstMuonTight;
     vecd tau_againstElectronLoose;
-    int ngoodtaus;
-    vecLorentzVector tau_p4;
-
+    vecb tau_isVetoTau;
 };
 
 #endif

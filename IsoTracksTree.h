@@ -33,6 +33,7 @@ public:
     veci isoTracks_pdgId;
     veci isoTracks_selectedidx;
     int isoTracks_nselected;
+    vecb isoTracks_isVetoTrack;
 };
 
 #endif

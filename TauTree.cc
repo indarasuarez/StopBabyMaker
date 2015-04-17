@@ -8,51 +8,58 @@ TauTree::TauTree ()
 
 using namespace tas;
 
-void TauTree::FillCommon ()
+void TauTree::FillCommon (int idx,float tau_pt_cut, float tau_eta_cut)
 {
-    float tau_pt_cut = 20.;
-    float tau_eta_cut = 2.4;
 
-    int ntau = 0;
-    for(unsigned int iTau = 0; iTau < taus_pf_p4().size(); iTau++){
-      if(taus_pf_p4().at(iTau).pt() < tau_pt_cut) continue;
-      if(fabs(taus_pf_p4().at(iTau).eta()) > tau_eta_cut) continue;
-      if (!taus_pf_byLooseCombinedIsolationDeltaBetaCorr3Hits().at(iTau)) continue; // HPS3 hits taus
+    if(taus_pf_p4().at(idx).pt() < tau_pt_cut) return;
+    if(fabs(taus_pf_p4().at(idx).eta()) > tau_eta_cut) return;
 
-      tau_p4.push_back(taus_pf_p4().at(iTau));
-      tau_charge.push_back(taus_pf_charge().at(iTau));
-      
-    //  tau_byDecayModeFinding.push_back(taus_pf_byDecayModeFinding().at(iTau)); //NOT FILLED IN NTUPLE
-      tau_MedisoCI3hit.push_back(taus_pf_byMediumCombinedIsolationDeltaBetaCorr3Hits().at(iTau));
-      tau_againstElectronLoose.push_back(taus_pf_againstElectronLoose().at(iTau));
-      tau_againstMuonTight.push_back(taus_pf_againstMuonTight().at(iTau));
+    tau_leadtrack_p4.push_back(taus_pf_lead_chargecand_p4().at(idx));
+    tau_leadneutral_p4.push_back(taus_pf_lead_neutrcand_p4().at(idx));
+    tau_p4.push_back(taus_pf_p4().at(idx));
+    tau_isocand_p4.push_back(taus_pf_isocands_p4().at(idx));
+    tau_sigcand_p4.push_back(taus_pf_signalcands_p4().at(idx));
+    tau_mass.push_back(taus_pf_mass().at(idx));
+    tau_ID.push_back(taus_pf_IDs().at(idx));
+    tau_charge.push_back(taus_pf_charge().at(idx));
+    //ngoodtaus= -9999.;
+    //tau_againstMuonTight.push_back();
+    //tau_againstElectronLoose.push_back();
+   // tau_isVetoTau.push_back();
 
-      ntau++;
-    }
-    ngoodtaus=ntau;
 }
 
 
 void TauTree::Reset()
 {
+    tau_IDnames.clear();
+    tau_leadtrack_p4.clear();
+    tau_leadneutral_p4.clear();
     tau_p4.clear();
+    tau_isocand_p4.clear();
+    tau_sigcand_p4.clear();
+    tau_mass.clear();
+    tau_ID.clear();
     tau_charge.clear();
-    tau_MedisoCI3hit.clear();
-    ngoodtaus	= -9999;
-    tau_againstElectronLoose.clear();
+    ngoodtaus= -9999.;
     tau_againstMuonTight.clear();
-//    tau_byDecayModeFinding.clear();
+    tau_againstElectronLoose.clear();
+    tau_isVetoTau.clear();
 }
 
 void TauTree::SetBranches(TTree* tree)
 {
-
-    tree->Branch("tau_p4", &tau_p4);
-    tree->Branch("tau_charge", &tau_charge);
-//    tree->Branch("tau_byDecayModeFinding", &tau_byDecayModeFinding);
-    tree->Branch("tau_isoCI3hit", &tau_MedisoCI3hit);
-    tree->Branch("tau_againstElectronLoose", &tau_againstElectronLoose);
-    tree->Branch("tau_againstMuonTight", &tau_againstMuonTight);
-    tree->Branch("ngoodtaus", &ngoodtaus);
-
+    tree->Branch("tau_IDnames",&tau_IDnames);
+    tree->Branch("tau_leadtrack_p4",&tau_leadtrack_p4);
+    tree->Branch("tau_leadneutral_p4",&tau_leadneutral_p4);
+    tree->Branch("tau_p4",&tau_p4);
+    tree->Branch("tau_isocand_p4",&tau_isocand_p4);
+    tree->Branch("tau_sigcand_p4",&tau_sigcand_p4);
+    tree->Branch("tau_mass",&tau_mass);
+    tree->Branch("tau_ID",&tau_ID);
+    tree->Branch("tau_charge",&tau_charge);
+    tree->Branch("ngoodtaus",&ngoodtaus);
+    tree->Branch("tau_againstMuonTight",&tau_againstMuonTight);
+    tree->Branch("tau_againstElectronLoose",&tau_againstElectronLoose);
+    tree->Branch("tau_isVetoTau",&tau_isVetoTau);
 }

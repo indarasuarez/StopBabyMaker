@@ -5,16 +5,10 @@
 #include "/home/users/isuarez/CORE/ElectronSelections.h"
 #include "/home/users/isuarez/CORE/MuonSelections.h"
 #include "/home/users/isuarez/CORE/JetSelections.h"
+#include "/home/users/isuarez/CORE/VertexSelections.h"
+#include "/home/users/isuarez/CORE/IsoTrackVeto.h"
 
 using namespace tas;
-
-bool isGoodVertex(size_t ivtx) {
-  if (vtxs_isFake()[ivtx]) return false;
-  if (vtxs_ndof()[ivtx] <= 4.) return false;
-  if (vtxs_position()[ivtx].Rho() > 2.0) return false;
-  if (fabs(vtxs_position()[ivtx].Z()) > 24.0) return false;
-  return true;
-}
 
 int numberOfGoodVertices() {
   int ngv = 0;
@@ -24,36 +18,47 @@ int numberOfGoodVertices() {
   return ngv;
 }
 
-int firstGoodVertex(){
-    for (unsigned int vidx = 0; vidx < vtxs_position().size(); vidx++) {
-        if (isGoodVertex(vidx))
-            return vidx;
-    }
-
-    return -1;
-}
-
-bool PassElectronPreSelections(unsigned int elIdx){
-  if(els_p4().at(elIdx).pt() <= 20.) return false;
+bool PassElectronPreSelections(unsigned int elIdx,float pt){
+  if(els_p4().at(elIdx).pt() < pt) return false;
   if(!electronID(elIdx, STOP_loose_v1)) return false;
   return true;
 }
 
-bool PassMuonPreSelections(unsigned int muIdx){
-  if(mus_p4().at(muIdx).pt() <= 20.) return false;
-  if(!muonID(muIdx, STOP_loose_v1)) return false;
-  if(muRelIso03(muIdx, STOP) > 0.15) return false; 
+bool PassMuonPreSelections(unsigned int muIdx,float pt){
+  if(mus_p4().at(muIdx).pt() < pt) return false;
+  if(!muonID(muIdx, STOP_tight_v1)) return false;
+//  if(muRelIso03(muIdx, STOP) > 0.15) return false; 
   return true;
 }
 
-bool PassJetPreSelections(unsigned int jetIdx){
-  if(pfjets_p4().at(jetIdx).pt() < 30.) return false;
-  if(pfjets_p4().at(jetIdx).eta() > 2.4) return false;
+bool PassJetPreSelections(unsigned int jetIdx,float pt, float eta){
+  if(pfjets_p4().at(jetIdx).pt() < pt) return false;
+  if(pfjets_p4().at(jetIdx).eta() > eta) return false;
   if(!isLoosePFJet(jetIdx)) return false;
-//doing overlap removal seperately
- // if(JetIsElectron(pfjets_p4().at(jetIdx))) return false;
- // if(JetIsMuon(pfjets_p4().at(jetIdx))) return false;
   return true;
+}
+
+bool isVetoTrack(int ipf, LorentzVector lepp4_, int charge){
+      if(ROOT::Math::VectorUtil::DeltaR(pfcands_p4().at(ipf), lepp4_) < 0.4)  return false;
+      //if not electron or muon
+      if(abs(pfcands_particleId().at(ipf))!=11 && abs(pfcands_particleId().at(ipf))!=13){
+          if(pfcands_p4().at(ipf).pt() < 10.) return false;
+          if(TrackIso(ipf,0.3,0.1)/pfcands_p4().at(ipf).pt() >0.1) return false;
+          if(pfcands_charge().at(ipf) * charge > 0) return false;
+      }else{
+          if(pfcands_p4().at(ipf).pt() < 5.) return false;
+          if(TrackIso(ipf,0.3,0.1)/pfcands_p4().at(ipf).pt()  >0.2) return false;
+      }
+      return true;
+}
+
+bool isVetoTau(int ipf, LorentzVector lepp4_, int charge){
+      if(taus_pf_p4().at(ipf).pt() < 20) return false;
+      if(taus_pf_p4().at(ipf).eta() > 2.4) return false;
+      if(ROOT::Math::VectorUtil::DeltaR(taus_pf_p4().at(ipf), lepp4_) < 0.4)  return false;
+      if(taus_pf_charge().at(ipf) * charge > 0) return false;
+      if(taus_pf_IDs().at(ipf).at(33) < 1) return false;
+      return true;
 }
 
 //overlap removal
@@ -135,25 +140,6 @@ int leptonGenpCount_lepTauDecays(int& nele, int& nmuon, int& ntau) {
   }//genps loop
 
   return nele + nmuon + ntau;
-}
-
-float TrackIso(int thisPf){
-
-  double coneR=0.3;
-  float absIso = 0.0;
-
-  for (int ipf = 0; ipf < (int)pfcands_p4().size(); ipf++) {
-
-    if( ipf == thisPf ) continue; // skip this PFCandidate
-    if(pfcands_charge().at(ipf) == 0 ) continue; // skip neutrals                                                                                                                          
-    double dr=ROOT::Math::VectorUtil::DeltaR( pfcands_p4().at(ipf) , pfcands_p4().at(thisPf) );
-    if( dr > coneR ) continue; // skip pfcands outside the cone                                     
-    if( pfcands_p4().at(ipf).pt()>=0.0 && fabs(pfcands_dz().at(ipf)) <= 0.1) absIso += pfcands_p4().at(ipf).pt();
-
-  }
-
-  return absIso;
-
 }
 
 struct sortbypt{

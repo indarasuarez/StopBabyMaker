@@ -26,7 +26,7 @@ public:
     void Reset ();
     void SetBranches (TTree* tree);
     void SetAliases (TTree* tree) const;
-    void FillCommon (int idx, int pdgid_, int pdgmotherid_, int status_);
+    void FillCommon (int idx);
 
 protected:
 
@@ -47,13 +47,14 @@ public:
         unsigned int signalProcessID;*/
 
 	vecLorentzVector p4;
+        
 //        LorentzVector prod_vtx;
   //      vecLorentzVector lepdaughter_p4;
         vecd charge;
 	vecd iso;
 	vecd mass;
 	veci id;
-	veci id_mother;
+	veci genpsidx;
         vecb isfromt;
 //	veci id_simplegrandma;
 //	veci id_simplemother;
@@ -63,6 +64,11 @@ public:
 	std::vector<veci> lepdaughter_id;
 //	veci lepdaughter_idx;
         int gen_n;
+        vecLorentzVector motherp4;
+        vecd mothercharge;
+        veci motherid;
+        veci motheridx;
+        veci motherstatus;
 };
 
 #endif
