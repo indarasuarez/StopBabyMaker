@@ -33,7 +33,7 @@ bool PassMuonPreSelections(unsigned int muIdx,float pt){
 
 bool PassJetPreSelections(unsigned int jetIdx,float pt, float eta){
   if(pfjets_p4().at(jetIdx).pt() < pt) return false;
-  if(pfjets_p4().at(jetIdx).eta() > eta) return false;
+  if(fabs(pfjets_p4().at(jetIdx).eta()) > eta) return false;
   if(!isLoosePFJet(jetIdx)) return false;
   return true;
 }
@@ -54,7 +54,7 @@ bool isVetoTrack(int ipf, LorentzVector lepp4_, int charge){
 
 bool isVetoTau(int ipf, LorentzVector lepp4_, int charge){
       if(taus_pf_p4().at(ipf).pt() < 20) return false;
-      if(taus_pf_p4().at(ipf).eta() > 2.4) return false;
+      if(fabs(taus_pf_p4().at(ipf).eta()) > 2.4) return false;
       if(ROOT::Math::VectorUtil::DeltaR(taus_pf_p4().at(ipf), lepp4_) < 0.4)  return false;
       if(taus_pf_charge().at(ipf) * charge > 0) return false;
       if(taus_pf_IDs().at(ipf).at(33) < 1) return false;
@@ -68,6 +68,7 @@ int getOverlappingJetIndex(LorentzVector& lep_, vector<LorentzVector> jets_, dou
   int closestjet_idx = 0;
 
 	for(unsigned int iJet=1; iJet<jets_.size(); iJet++){
+            if(!PassJetPreSelections(iJet,30., 2.4)) continue;
             DR_lep_jet1 = ROOT::Math::VectorUtil::DeltaR(jets_.at(closestjet_idx), lep_);
             DR_lep_jet2 = ROOT::Math::VectorUtil::DeltaR(jets_.at(iJet), lep_);
             if(DR_lep_jet1 > DR_lep_jet2) closestjet_idx = iJet;

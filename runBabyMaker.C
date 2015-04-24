@@ -16,7 +16,7 @@ int main(int argc, char **argv){
   //babyMaker::setSkimVariables(int nvtx, float met, int nlep, float leppt, float lepeta, int njets, int jetpt, int jeteta){
    mylooper->setSkimVariables(1, 30., 1, 20., 2.4, 2, 30., 2.4);
 
-  char* dirpath = "../babies_16April2015/";  
+  char* dirpath = "../";  
   
   int file=0;
   int nevents = -1;

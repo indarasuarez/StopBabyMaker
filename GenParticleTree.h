@@ -63,7 +63,7 @@ public:
 	veci status;
 	std::vector<veci> lepdaughter_id;
 //	veci lepdaughter_idx;
-        int gen_n;
+        int gen_nfromt;
         vecLorentzVector motherp4;
         vecd mothercharge;
         veci motherid;

@@ -267,7 +267,13 @@ int babyMaker::looper(TChain* chain, char* output_name, int nEvents, char* path)
 
     //taus
     int vetotaus=0;
+
     Taus.tau_IDnames = taus_pf_IDnames();
+
+ //   for(unsigned int iTau = 0; iTau < taus_pf_IDnames().size(); iTau++){
+   //       cout<<taus_pf_IDnames().at(iTau)<<endl;
+   // }
+
     for(unsigned int iTau = 0; iTau < taus_pf_p4().size(); iTau++){
       Taus.FillCommon(iTau, 20, 2.4);
       if(isVetoTau(iTau, lep1.p4, lep1.charge)){
@@ -304,6 +310,11 @@ int babyMaker::looper(TChain* chain, char* output_name, int nEvents, char* path)
    int ntausfromt=0;
    int nelsfromt=0;
    int nmusfromt=0;
+   int n_nutaufromt=0;
+   int n_nuelfromt=0;
+   int n_numufromt=0;
+
+   int econv = 0;
     //std::cout << "[babymaker::looper]: filling gen particles vars" << std::endl;
     //gen particles
     for(unsigned int genx = 0; genx < genps_p4().size() ; genx++){
@@ -311,16 +322,18 @@ int babyMaker::looper(TChain* chain, char* output_name, int nEvents, char* path)
       if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_el && genps_status().at(genx) == 1) gen_els.FillCommon(genx);
       if(abs(genps_id_mother().at(genx)) == pdg_tau && abs(genps_id().at(genx)) == pdg_el && genps_status().at(genx) == 1) gen_leptau_els.FillCommon(genx);
       if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_el && genps_status().at(genx) == 1 && abs(genps_id_mother().at(genps_idx_mother().at(genx))) == pdg_t) nelsfromt++;
+//if(abs(genps_id().at(genx)) == pdg_el && abs(genps_id_mother().at(genx)) == pdg_el && genps_charge().at(genx) == (-1)*genps_charge().at(genps_idx_mother().at(genx))) econv++;
+      if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_nue && genps_status().at(genx) == 1 && abs(genps_id_mother().at(genps_idx_mother().at(genx))) == pdg_t) n_nuelfromt++;      
 
       if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_mu && genps_status().at(genx) == 1) gen_mus.FillCommon(genx);
       if(abs(genps_id_mother().at(genx)) == pdg_tau && abs(genps_id().at(genx)) == pdg_mu && genps_status().at(genx) == 1) gen_leptau_mus.FillCommon(genx);
       if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_mu && genps_status().at(genx) == 1 && abs(genps_id_mother().at(genps_idx_mother().at(genx))) == pdg_t ) nmusfromt++;
- 
+      if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_numu && genps_status().at(genx) == 1 && abs(genps_id_mother().at(genps_idx_mother().at(genx))) == pdg_t ) n_numufromt++;
       //if(abs(genps_id().at(genx)) == pdg_tau) cout<<"found a tau and status ="<<genps_status().at(genx)<<endl;
       //if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_tau) cout<<"found a tau with mother W and status = "<<genps_status().at(genx) <<endl;
       if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_tau && genps_status().at(genx) == 2) gen_taus.FillCommon(genx);
       if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_tau && genps_status().at(genx) == 2 && abs(genps_id_mother().at(genps_idx_mother().at(genx))) == pdg_t ) ntausfromt++;
-    
+      if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_nutau && genps_status().at(genx) == 1 && abs(genps_id_mother().at(genps_idx_mother().at(genx))) == pdg_t ) n_nutaufromt++;
       if(abs(genps_id().at(genx)) == pdg_tau && genps_status().at(genx) == 2) gen_taus.FillCommon(genx); 
 
       if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_nue && genps_status().at(genx) == 1) gen_nus.FillCommon(genx);
@@ -342,14 +355,20 @@ int babyMaker::looper(TChain* chain, char* output_name, int nEvents, char* path)
 
     }
 
-    gen_els.gen_n = nelsfromt;
-    gen_mus.gen_n = nmusfromt;
-    gen_taus.gen_n = ntausfromt;
+    gen_els.gen_nfromt = n_nuelfromt;
+    gen_mus.gen_nfromt = n_numufromt;
+    gen_taus.gen_nfromt = n_nutaufromt;
 
-    //if(nelsfromt + nmusfromt + ntausfromt ==2){
-      //if(StopEvt.PassTrackVeto) dumpDocLines(); 
-    //}
+/*    if(nelsfromt + nmusfromt + ntausfromt == 3){
+      cout<<"***************************BEGIN******************************"<<endl;
+      cout<<"gen els = "<<n_nuelfromt<<" gen mus = "<<n_numufromt<<" gen taus = "<<n_nutaufromt<<endl;
+       dumpDocLines(); 
+    
 
+    for(unsigned int genx = 0; genx < genps_p4().size() ; genx++){
+         if(abs(genps_id_mother().at(genx)) == pdg_W && abs(genps_id().at(genx)) == pdg_el && genps_status().at(genx) == 1 && abs(genps_id_mother().at(genps_idx_mother().at(genx))) == pdg_t) cout<<"genps_id().at(genx) = "<<genps_id().at(genx)<<" genps_id_mother().at(genx) = "<<genps_id_mother().at(genx)<<" abs(genps_id_mother().at(genps_idx_mother().at(genx))) = "<<abs(genps_id_mother().at(genps_idx_mother().at(genx))) <<" abs(genps_id_mother().at(genps_idx_mother().at(genps_idx_mother().at(genx)))) = "<< abs(genps_id_mother().at(genps_idx_mother().at(genps_idx_mother().at(genx)))) <<endl;
+   }
+}*/
     BabyTree->Fill();
 
     }//close event loop

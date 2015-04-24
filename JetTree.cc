@@ -56,7 +56,7 @@ void JetTree::FillCommon(unsigned int overlep1_idx = -9999, unsigned int overlep
 
         //remove overlaps & apply preselections
         if(jindex == overlep1_idx || jindex == overlep2_idx) continue; //remove ovelaps from your jet collection
-        if(!PassJetPreSelections(jindex,30, 2.4)) continue;
+        if(!PassJetPreSelections(jindex,30., 2.4)) continue;
         if (pfjets_p4().at(jindex).pt() < m_ak4_pt_cut) continue;
  
         ak4pfjets_p4.push_back(pfjets_p4().at(jindex));

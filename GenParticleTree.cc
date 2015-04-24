@@ -103,7 +103,7 @@ void GenParticleTree::Reset()
 	status.clear();
 	lepdaughter_id.clear();
 	gentaudecay.clear();
-        gen_n = -9999;
+        gen_nfromt = -9999;
 
         motherp4.clear();
         mothercharge.clear();
@@ -124,7 +124,7 @@ void GenParticleTree::SetBranches(TTree* tree)
         tree->Branch(Form("gen%sstatus"  , prefix_.c_str()) ,           &status          );
         tree->Branch(Form("gen%slepdaughter_id"  , prefix_.c_str()) ,           &lepdaughter_id          );
         tree->Branch(Form("gen%sgentaudecay"  , prefix_.c_str()) ,           &gentaudecay          );
-        tree->Branch(Form("gen_n%s"  , prefix_.c_str()) ,           &gen_n);
+        tree->Branch(Form("gen_nfromt%s"  , prefix_.c_str()) ,           &gen_nfromt);
         tree->Branch(Form("gen%smotherp4",  prefix_.c_str()) ,           &motherp4);
         tree->Branch(Form("gen%smothercharge", prefix_.c_str()) ,           &mothercharge);
         tree->Branch(Form("gen%smotherid", prefix_.c_str()) ,           &motherid);
